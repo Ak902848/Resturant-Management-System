@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Table Reservation</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <nav class="topnav">
+    <div class="brand">🍽️ MyRestaurant</div>
+    <div class="links">
+      <a href="dashboard.html">Home</a>
+            <a href="menu.html">Menu</a>
+            <a href="category.html" class="active">Category</a>
+            <a href="cart.html">Checkout</a>
+            <a href="orders.html">Your Orders</a>
+            <a href="profile.html">Profile</a>
+    </div>
+  </nav>
+
+<h1>Book a Table</h1>
+
+<form id="reserveForm">
+    <input type="text" id="name" placeholder="Customer Name" required />
+    <input type="text" id="phone" placeholder="Phone" required />
+    <input type="datetime-local" id="datetime" required />
+    <input type="number" id="people" placeholder="Number of People" required />
+    <button type="submit">Reserve</button>
+</form>
+
+<p id="msg"></p>
+
+<script>
+document.getElementById("reserveForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+        Name: document.getElementById("name").value,
+        Phone: document.getElementById("phone").value,
+        ReservationDateTime: document.getElementById("datetime").value,
+        NumberOfPeople: document.getElementById("people").value
+    };
+
+    const res = await fetch("http://localhost:5000/api/reservations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    const msg = await res.json();
+    document.getElementById("msg").innerText = msg.message || "Reservation placed!";
+});
+</script>
+
+</body>
+</html>

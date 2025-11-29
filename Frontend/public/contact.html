@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us</title>
+  <link rel="stylesheet" href="./css/contact.css" />
+  <link rel="stylesheet" href="./css/home.css">
+</head>
+
+<body style="background-image: url(./images/34781.jpg);background-size: cover;background-position: center;">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">🍽️ MyRestaurant</div>
+    <ul class="nav-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Contact Section -->
+  <section class="contact-section" style="background-image: url('./34781.jpg');">
+
+    <h2>Contact Us</h2>
+
+    <div class="contact-container">
+
+      <!-- Contact Details -->
+      <div class="contact-details">
+        <h3>Our Details</h3>
+        <p><strong>Restaurant Name:</strong>  MyRestaurant</p>
+        <p><strong>Phone:</strong> +91-9028483315</p>
+        <p><strong>Email:</strong> info@MyRestaurant.com</p>
+        <p><strong>Address:</strong> kasliwalpoorva sambhaaji nagar. Maharashtra</p>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="contact-form">
+        <h3>Send Us a Query</h3>
+        <form id="contactForm">
+          <input type="text" name="name" id="name" placeholder="Name" required />
+          <input type="tel" name="number" id="number" placeholder="Number" required />
+          <input type="email" name="email" id="email" placeholder="Email" required />
+          <input type="text" name="address" id="address" placeholder="Address" />
+          <textarea name="query" id="query" placeholder="Your Query" required></textarea>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 MyRestaurant | All Rights Reserved</p>
+  </footer>
+
+  <script src="contact.js"></script>
+
+</body>
+</html>

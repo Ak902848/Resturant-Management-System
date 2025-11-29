@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant Signup</title>
+    <link rel="stylesheet" href="css/signup.css" />
+
+    <script>
+        async function signupUser(event) {
+            event.preventDefault();  // ✅ Prevent page reload
+
+            const name = document.querySelector("#name").value;
+            const email = document.querySelector("#email").value;
+            const mobile = document.querySelector("#mobile").value;
+            const password = document.querySelector("#password").value;
+
+            const res = await fetch("http://localhost:5000/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, mobile, password }),
+            });
+
+            const data = await res.json();
+            alert(data.message);
+
+            if (data.message === "Signup successful") {
+                window.location.href = "login.html";
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <img src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png" class="logo" />
+            <h2>Create Account</h2>
+            <p>Join and manage your restaurant easily</p>
+        </div>
+
+        <!-- ✅ Added onsubmit + IDs -->
+        <form onsubmit="signupUser(event)">
+            <label>Name</label>
+            <input id="name" type="text" placeholder="Enter full name" required />
+
+            <label>Email</label>
+            <input id="email" type="email" placeholder="Enter email" required />
+
+            <label>Mobile No</label>
+            <input id="mobile" type="tel" placeholder="Enter mobile no" required />
+
+            <label>Password</label>
+            <input id="password" type="password" placeholder="Create password" required />
+
+            <button type="submit" class="btn-success">Sign Up</button>
+        </form>
+
+        <p class="switch">Already have an account? <a href="login.html">Login</a></p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="css/menu.css">
+</head>
+
+<body>
+
+    <nav class="topnav">
+        <div class="brand">🛒 MyRestaurant</div>
+        <div class="links">
+            <a href="dashboard.html">Home</a>
+            <a href="menu.html">Menu</a>
+            <a href="category.html">Category</a>
+            <a href="cart.html" class="active">Checkout</a>
+            <a href="orders.html">Your Orders</a>
+            <a href="profile.html">Profile</a>
+        </div>
+    </nav>
+
+    <h1 class="title">Your Cart</h1>
+
+    <div id="cart-container" class="cart-container"></div>
+
+    <div class="cart-summary">
+        <h2>Total: ₹<span id="totalAmount">0</span></h2>
+        <button id="checkoutBtn" class="checkout-btn">Proceed to Payment</button>
+    </div>
+
+    <script>
+        const userId = localStorage.getItem("userId");
+
+        if (!userId) {
+            alert("User not logged in");
+            window.location.href = "login.html";
+        }
+
+        const cartContainer = document.getElementById("cart-container");
+        const totalAmountEl = document.getElementById("totalAmount");
+
+        async function loadCart() {
+            const res = await fetch(`http://localhost:5000/api/cart/${userId}`);
+            const items = await res.json();
+
+            cartContainer.innerHTML = "";
+            let total = 0;
+
+            items.forEach(item => {
+                const subtotal = item.Price * item.quantity;
+                total += subtotal;
+
+                const div = document.createElement("div");
+                div.className = "cart-item";
+
+                div.innerHTML = `
+                    <div class="cart-info">
+                        <div class="cart-name">${item.Name}</div>
+                        <div class="cart-price">₹${item.Price}</div>
+                    </div>
+
+                    <div class="quantity-box">
+                        <button onclick="updateQty(${item.cart_item_id}, ${item.quantity - 1})">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="updateQty(${item.cart_item_id}, ${item.quantity + 1})">+</button>
+                    </div>
+
+                    <button class="remove-btn" onclick="removeItem(${item.cart_item_id})">Remove</button>
+                `;
+
+                cartContainer.appendChild(div);
+            });
+
+            totalAmountEl.innerText = total;
+            localStorage.setItem("cart_total", total);
+        }
+
+        async function updateQty(cartItemId, newQty) {
+            if (newQty < 1) return;
+
+            await fetch(`http://localhost:5000/api/cart/update/${cartItemId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ quantity: newQty })
+            });
+
+            loadCart();
+        }
+
+        async function removeItem(cartItemId) {
+            await fetch(`http://localhost:5000/api/cart/remove/${cartItemId}`, {
+                method: "DELETE"
+            });
+
+            loadCart();
+        }
+
+        document.getElementById("checkoutBtn").addEventListener("click", () => {
+            window.location.href = "payment.html";
+        });
+
+        loadCart();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant Dashboard</title>
+    <link rel="stylesheet" href="css/menu.css" />
+    <link rel="stylesheet" href="css/home.css">
+    
+</head>
+
+<body>
+
+    <nav class="topnav">
+        <div class="brand">🍽️ MyRestaurant</div>
+        <div class="links">
+            <a href="dashboard.html" class="active">Home</a>
+            <a href="menu.html">Menu</a>
+            <a href="category.html">Category</a>
+            <a href="cart.html">Checkout</a>
+            <a href="orders.html">Your Orders</a>
+            <a href="profile.html">Profile</a>
+            <a href="home.html">Logout</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header id="home" class="hero">
+        <div class="overlay"></div>
+        <div class="hero-content">
+            <h1>Welcome to Your Dashboard</h1>
+            <p>Manage menu, categories, and your restaurant operations at one place.</p>
+        </div>
+    </header>
+    <!-- DASHBOARD STATS -->
+    <section class="stats-section">
+        <div class="stat-card">
+            <h3>Total Orders</h3>
+            <p id="totalOrders">0</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Favorites</h3>
+            <p id="totalFav">0</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Cart Items</h3>
+            <p id="totalCart">0</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Payments</h3>
+            <p id="totalPayments">0</p>
+        </div>
+    </section>
+
+    <!-- RECENT ORDERS -->
+    <section class="recent-orders">
+        <h2>Recent Orders</h2>
+        <ul id="orderList"></ul>
+    </section>
+
+    <script>
+        const imageMap = {
+            "idli": "http://localhost:5000/images/item1.jpg",
+            "medu vada": "http://localhost:5000/images/item2.jpeg",
+            "plain dosa": "http://localhost:5000/images/item3.jpeg",
+            "masala dosa": "http://localhost:5000/images/item4.jpeg",
+            "upma": "http://localhost:5000/images/item2.jpeg",
+            "poha": "http://localhost:5000/images/item3.jpeg",
+        };
+
+        function getImageForItem(name) {
+            const key = name.toLowerCase().trim();
+            return imageMap[key] || "http://localhost:5000/images/item2.jpeg";
+        }
+
+        const USER_ID = localStorage.getItem("userId") || 1;
+        let allOrders = [];
+
+        const orderContainer = document.getElementById("orderList");
+
+        async function loadOrders() {
+            try {
+                const res = await fetch(`http://localhost:5000/api/orders/${USER_ID}`);
+                allOrders = await res.json();
+                renderOrders(allOrders);
+            } catch (err) {
+                console.error(err);
+                orderContainer.innerHTML = "<p>Could not load orders.</p>";
+            }
+        }
+
+        function renderOrders(list) {
+            orderContainer.innerHTML = "";
+            if (!list.length) {
+                orderContainer.innerHTML = "<p>No orders found.</p>";
+                return;
+            }
+
+            list.forEach(order => {
+                let itemHTML = "";
+                order.Items.forEach(item => {
+                    const img = getImageForItem(item.Name);
+                    itemHTML += `
+                <div class="order-item">
+                    <img src="${img}" class="item-img" alt="${item.Name}">
+                    <div class="item-info">
+                        <p class="item-name">${item.Name}</p>
+                        <p>Qty: ${item.Quantity}</p>
+                        <p>₹${Number(item.Price).toFixed(2)}</p>
+                    </div>
+                </div>
+            `;
+                });
+
+                orderContainer.innerHTML += `
+            <li class="order-card">
+                <h3>Order #${order.OrderID}</h3>
+                <p><strong>Date:</strong> ${order.OrderDate}</p>
+                <p><strong>Total:</strong> ₹${Number(order.TotalAmount).toFixed(2)}</p>
+                <div class="item-list">${itemHTML}</div>
+            </li>
+        `;
+            });
+        }
+
+        async function loadStats() {
+            try {
+                const [ordersRes, favRes, cartRes, payRes] = await Promise.all([
+                    fetch(`http://localhost:5000/api/orders/${USER_ID}`),
+                    fetch(`http://localhost:5000/api/users/${USER_ID}/favorites`),
+                    fetch(`http://localhost:5000/api/cart/${USER_ID}`),
+                    fetch(`http://localhost:5000/api/users/${USER_ID}/payments`)
+                ]);
+
+                const [orders, favs, cart, payments] = await Promise.all([
+                    ordersRes.json(), favRes.json(), cartRes.json(), payRes.json()
+                ]);
+
+                document.getElementById("totalOrders").textContent = orders.length;
+                document.getElementById("totalFav").textContent = favs.length;
+                document.getElementById("totalCart").textContent = cart.length;
+                document.getElementById("totalPayments").textContent = payments.length;
+
+            } catch (err) {
+                console.error("Stats load error:", err);
+            }
+        }
+
+        // INIT
+        loadOrders();
+        loadStats();
+
+    </script>
+
+
+</body>
+
+</html>

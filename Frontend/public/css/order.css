@@ -1,0 +1,51 @@
+.controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.controls input,
+.controls select {
+    padding: 8px 10px;
+    font-size: 16px;
+}
+
+.orders-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.order-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.order-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px;
+    background: #fafafa;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.item-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.item-name {
+    font-weight: bold;
+    font-size: 16px;
+}

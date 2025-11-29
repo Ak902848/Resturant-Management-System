@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Payment</title>
+    <link rel="stylesheet" href="css/payment.css">
+    <link rel="stylesheet" href="css/menu.css">
+</head>
+
+<body>
+
+    <nav class="topnav">
+        <div class="brand">💳 Payment</div>
+        <div class="links">
+            <a href="dashboard.html">Home</a>
+            <a href="cart.html">Back to Cart</a>
+        </div>
+    </nav>
+
+    <h1 class="title">Complete Your Payment</h1>
+
+    <div class="payment-box">
+        <h2>Select Payment Result</h2>
+
+        <button id="paySuccess" class="pay success">Payment Successful</button>
+        <button id="failBtn" class="pay fail">Payment Failed</button>
+
+        <p id="msg" class="msg"></p>
+    </div>
+
+    <script>
+        // ensure you have saved user ID and cart total in localStorage earlier when user logs in / cart summary
+        // localStorage.setItem('userId', '1');    <-- set after login
+        // localStorage.setItem('cart_total', '250'); <-- set when loading cart summary
+
+        document.getElementById("paySuccess").addEventListener("click", async () => {
+            const userId = localStorage.getItem("userId");   // use consistent key
+            const amountStr = localStorage.getItem("cart_total");
+            const amount = amountStr ? Number(amountStr) : null;
+
+            if (!userId || !amount) {
+                alert("Missing user or amount. Make sure you are logged in and cart is not empty.");
+                return;
+            }
+
+            try {
+                const res = await fetch("http://localhost:5000/api/payment/process", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        user_id: Number(userId),
+                        amount,
+                        method: "Cash"
+                    })
+                });
+
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert("Order placed successfully!");
+
+                    // Clear backend cart
+                    await fetch(`http://localhost:5000/api/cart/clear/${userId}`, {
+                        method: "DELETE"
+                    });
+
+                    // Clear local total
+                    localStorage.removeItem("cart_total");
+
+                    window.location.href = "orders.html";
+                }
+                else {
+                    alert(data.message || "Payment failed");
+                }
+            } catch (err) {
+                console.error("Payment error:", err);
+                alert("Network error during payment.");
+            }
+        });
+
+        document.getElementById("failBtn").addEventListener("click", () => {
+            document.getElementById("msg").innerText = "Payment Failed ❌ Try Again";
+        });
+    </script>
+
+
+
+</body>
+
+</html>

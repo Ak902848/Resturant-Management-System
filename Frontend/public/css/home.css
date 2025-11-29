@@ -1,0 +1,269 @@
+/* Global Page Styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    /*background: url("https://images.unsplash.com/photo-1555396273-367ea4eb4db5") no-repeat center center/cover;*/
+    height: 100vh;
+    overflow-x: hidden;
+}
+
+/* NAVBAR */
+.navbar {
+    width: 100%;
+    padding: 15px 40px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar .logo {
+    color: #ffd369;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.navbar ul li a:hover,
+.navbar ul li a.active {
+    background: #ffd369;
+    color: black;
+}
+
+/* HERO SECTION */
+.hero {
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.hero-text h1 {
+    font-size: 50px;
+    color: white;
+    text-shadow: 2px 2px 10px black;
+}
+
+.hero-text p {
+    font-size: 20px;
+    color: #ffe9a3;
+}
+
+/* IMAGE SLIDER */
+.slider {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 20px 0;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.slide-track {
+    display: flex;
+    width: calc(250px * 10);
+    animation: scroll 20s linear infinite;
+}
+
+.slide-track img {
+    height: 160px;
+    width: 240px;
+    margin: 0 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Marquee Animation */
+@keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* FOOTER */
+footer {
+    padding: 15px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    text-align: center;
+    margin-top: 40px;
+}
+h1{
+    color: white;
+}
+
+/* HERO SECTION */
+.hero {
+height: 70vh;
+background: url('https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1350&q=80') no-repeat center/cover;
+position: relative;
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 70px;
+}
+
+
+.hero .overlay {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.55);
+}
+
+
+.hero-content {
+position: relative;
+color: #fff;
+text-align: center;
+}
+
+
+.hero-content h1 {
+font-size: 3rem;
+color: #ffd369;
+}
+
+
+.hero-content p {
+font-size: 1.1rem;
+color: #eee;
+}
+
+
+/* SECTIONS */
+.section {
+padding: 50px 60px;
+}
+
+
+.section-title {
+text-align: center;
+font-size: 2rem;
+}
+
+/* ===============================
+   DASHBOARD STATS SECTION
+=============================== */
+.stats-section {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin: 40px auto;
+    width: 90%;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(6px);
+    border-radius: 14px;
+    padding: 25px;
+    text-align: center;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 211, 105, 0.25);
+}
+
+.stat-card h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #2e2b24;
+}
+
+.stat-card p {
+    font-size: 28px;
+    font-weight: bold;
+    color: #581515;
+}
+
+
+/* ===============================
+   RECENT ORDERS LIST
+=============================== */
+.recent-orders {
+    width: 90%;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+}
+
+.recent-orders h2 {
+    margin-bottom: 20px;
+    color: #ffd369;
+    font-size: 26px;
+}
+
+#orderList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#orderList li {
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    font-size: 16px;
+    border-left: 4px solid #ffd369;
+    transition: 0.3s;
+}
+
+#orderList li:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateX(5px);
+}
+
+
+/* ===============================
+   RESPONSIVE DESIGN
+=============================== */
+@media (max-width: 900px) {
+    .stats-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .stats-section {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    #orderList li {
+        font-size: 14px;
+    }
+}

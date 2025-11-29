@@ -1,0 +1,98 @@
+/* Improved Signup Page Styles */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+
+    /* Soft Restaurant Theme Background */
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1350&q=80')
+                no-repeat center/cover;
+}
+
+.auth-container {
+    width: 380px;
+    background: rgba(25, 25, 30, 0.85);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 199, 0, 0.3);
+    backdrop-filter: blur(4px);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.auth-header h2 {
+    color: #ffdd6e;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.auth-header p {
+    color: #e6e6e6;
+    font-size: 0.9rem;
+}
+
+.logo {
+    width: 70px;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 3px 6px rgba(255, 215, 0, 0.4));
+}
+
+label {
+    color: #ffdd6e;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,215,0,0.35);
+    color: white;
+}
+
+input::placeholder {
+    color: #bfbfbf;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #c19016, #ffda4b);
+    color: #000;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #ffe07a, #ffd23a);
+    transform: translateY(-2px);
+}
+
+.switch {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.switch a {
+    color: #ffd23a;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.switch a:hover {
+    text-decoration: underline;
+}

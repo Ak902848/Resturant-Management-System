@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Profile - MyRestaurant</title>
+    <link rel="stylesheet" href="css/menu.css" />
+    <link rel="stylesheet" href="css/profile.css" />
+    <style>
+        /* small page-specific tweaks so page looks good even if profile.css is minimal */
+        .profile-wrapper {
+            max-width: 1100px;
+            margin: 100px auto 60px;
+            padding: 20px;
+        }
+
+        .profile-top {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .pp {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ffd369;
+        }
+
+        .profile-info h2 {
+            margin: 0 0 8px;
+            color: #333;
+        }
+
+        .profile-meta p {
+            margin: 6px 0;
+            color: #555;
+        }
+
+        .btn-row {
+            margin-top: 12px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background: #f39c12;
+            color: #fff;
+        }
+
+        .btn-save {
+            background: #2ecc71;
+            color: #fff;
+        }
+
+        .btn-upload {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 22px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #ffb84d;
+        }
+
+        .fav-list li {
+            padding: 6px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .cart-preview p {
+            font-size: 16px;
+            margin: 8px 0;
+        }
+
+        #cartTotal {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        #orderChart {
+            height: 250px !important;
+        }
+
+        @media (max-width:720px) {
+            .profile-top {
+                flex-direction: column;
+                align-items: flex-start
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="topnav">
+        <div class="brand">🍽️ MyRestaurant</div>
+        <div class="links">
+            <a href="dashboard.html">Home</a>
+            <a href="menu.html">Menu</a>
+            <a href="category.html">Category</a>
+            <a href="cart.html">Checkout</a>
+            <a href="orders.html">Your Orders</a>
+            <a href="profile.html" class="active">Profile</a>
+        </div>
+    </nav>
+
+    <div class="profile-wrapper">
+        <section class="profile-top">
+            <div style="text-align:center;">
+                <img id="profilePic" class="pp" src="images/pp.jpg" alt="Profile picture">
+                <div class="btn-row">
+                    <button class="btn btn-upload" id="changePicBtn">Change Picture</button>
+                    <input type="file" id="uploadPic" accept="image/*" style="display:none;">
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <h2 id="userName">Loading...</h2>
+                <div class="profile-meta">
+                    <p><strong>Email:</strong> <span id="userEmail"></span></p>
+                    <p><strong>Mobile:</strong> <span id="userMobile"></span></p>
+                    <p><strong>Member since:</strong> <span id="userDate"></span></p>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn btn-edit" id="editBtn">Edit Profile</button>
+                    <button class="btn btn-save" id="saveBtn" style="display:none;">Save</button>
+                </div>
+
+                <div id="editForm" style="margin-top:12px; display:none;">
+                    <input id="editName" type="text" placeholder="Full name"
+                        style="padding:8px;width:60%;margin-bottom:8px;">
+                    <input id="editMobile" type="text" placeholder="Mobile" style="padding:8px;width:60%;">
+                </div>
+            </div>
+        </section>
+
+        <section class="grid-cards">
+            <div class="card">
+                <h3>Order History (Last 5)</h3>
+                <canvas id="orderChart" style="width:100%;"></canvas>
+            </div>
+
+            <!-- <div class="card">
+                <h3>Favourites</h3>
+                <ul id="favList" class="fav-list"></ul>
+            </div> -->
+
+            <div class="card">
+                <h3>Payments</h3>
+                <div id="paymentList"></div>
+            </div>
+
+            <div class="card">
+                <h3>Cart Preview</h3>
+                <div id="cartList" class="cart-preview"></div>
+                <p style="margin-top:10px;"><strong>Total:</strong> ₹<span id="cartTotal">0.00</span></p>
+                <div style="margin-top:12px;">
+                    <a href="cart.html" class="btn" style="background:#ffd369">Go to Cart</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">© 2025 MyRestaurant</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const imageMap = {
+            "idli": "http://localhost:5000/images/item1.jpg",
+            "medu vada": "http://localhost:5000/images/item2.jpeg",
+            "masala dosa": "http://localhost:5000/images/item4.jpeg",
+            "masala chai": "http://localhost:5000/images/item6.jpg",
+            "filter coffee": "http://localhost:5000/images/item7.jpg"
+        };
+
+        function imgFor(name) { return imageMap[name.toLowerCase()] || "http://localhost:5000/images/item2.jpeg"; }
+
+        const USER_ID = localStorage.getItem("userId") || 1;
+
+        // ---- Profile load ----
+        async function loadProfile() {
+            try {
+                const res = await fetch(`http://localhost:5000/api/users/${USER_ID}`);
+                if (!res.ok) throw new Error("Failed to fetch profile");
+                const user = await res.json();
+
+                document.getElementById("userName").textContent = user.name || user.Name || "Unknown";
+                document.getElementById("userEmail").textContent = user.email || user.Email || "";
+                document.getElementById("userMobile").textContent = user.mobile || user.Mobile || user.mobile_no || "";
+                document.getElementById("userDate").textContent = user.created_at || user.CreatedDate || "";
+
+                if (user.avatar) document.getElementById("profilePic").src = `http://localhost:5000${user.avatar}`;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // ---- Edit/save profile ----
+        document.getElementById("editBtn").addEventListener("click", async () => {
+            document.getElementById("editForm").style.display = "";
+            document.getElementById("saveBtn").style.display = "";
+            const name = document.getElementById("userName").textContent;
+            const mobile = document.getElementById("userMobile").textContent;
+            document.getElementById("editName").value = name;
+            document.getElementById("editMobile").value = mobile;
+        });
+
+        document.getElementById("saveBtn").addEventListener("click", async () => {
+            const payload = {
+                name: document.getElementById("editName").value,
+                mobile_no: document.getElementById("editMobile").value
+            };
+            const res = await fetch(`http://localhost:5000/api/users/${USER_ID}`, {
+                method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                alert("Profile updated");
+                loadProfile();
+                document.getElementById("editForm").style.display = "none";
+                document.getElementById("saveBtn").style.display = "none";
+            } else alert("Update failed");
+        });
+
+        // ---- Avatar upload ----
+        document.getElementById("changePicBtn").addEventListener("click", () => document.getElementById("uploadPic").click());
+        document.getElementById("uploadPic").addEventListener("change", async function () {
+            const f = this.files[0];
+            if (!f) return;
+            const fd = new FormData(); fd.append("avatar", f);
+            const res = await fetch(`http://localhost:5000/api/users/${USER_ID}/avatar`, { method: "POST", body: fd });
+            const data = await res.json();
+            if (data.avatar) document.getElementById("profilePic").src = `http://localhost:5000${data.avatar}`;
+        });
+
+        // ---- Orders (chart) ----
+        async function loadOrderChart() {
+            try {
+                const res = await fetch(`http://localhost:5000/api/orders/${USER_ID}`);
+                const orders = await res.json();
+
+                const byDate = {};
+                orders.forEach(o => {
+                    const date = (o.OrderDate || o.OrderDate)?.split && o.OrderDate.split('T')[0] || (o.OrderDate || '').slice(0, 10);
+                    byDate[date] = (byDate[date] || 0) + Number(o.TotalAmount || o.Total || 0);
+                });
+
+                // last 5 dates only
+                const dates = Object.keys(byDate).sort().slice(-5);
+                const totals = dates.map(d => byDate[d]);
+
+                new Chart(document.getElementById("orderChart"), {
+                    type: 'bar',
+                    data: { labels: dates, datasets: [{ label: 'Total (₹)', data: totals, backgroundColor: '#ffd369' }] },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // ---- Favourites ----
+        async function loadFavs() {
+            try {
+                const res = await fetch(`http://localhost:5000/api/users/${USER_ID}/favorites`);
+                const favs = await res.json();
+                const ul = document.getElementById("favList"); ul.innerHTML = "";
+                if (!favs.length) ul.innerHTML = "<li>No favorites yet</li>";
+                favs.forEach(f => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<strong>${f.Name}</strong> — ₹${Number(f.Price).toFixed(2)}`;
+                    ul.appendChild(li);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // ---- Payments ----
+        async function loadPayments() {
+            try {
+                const res = await fetch(`http://localhost:5000/api/users/${USER_ID}/payments`);
+                const rows = await res.json();
+                const el = document.getElementById("paymentList"); el.innerHTML = "";
+                if (!rows.length) el.innerHTML = "<p>No payments found</p>";
+                rows.forEach(p => {
+                    const div = document.createElement("div");
+                    div.innerHTML = `<p>${(p.payment_date || p.PaymentDate || '')} — ${p.payment_method || p.PaymentMethod || 'N/A'} — ₹${p.amount || p.Amount || 0}</p>`;
+                    el.appendChild(div);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // ---- Cart preview ----
+        async function loadCartPreview() {
+            try {
+                const res = await fetch(`http://localhost:5000/api/cart/${USER_ID}`);
+                const rows = await res.json();
+                const el = document.getElementById("cartList"); el.innerHTML = "";
+                let total = 0;
+                if (!rows.length) el.innerHTML = "<p>Cart is empty</p>";
+                rows.forEach(r => {
+                    total += Number(r.Price) * Number(r.quantity);
+                    const p = document.createElement("p");
+                    p.innerHTML = `<strong>${r.Name}</strong> &times; ${r.quantity} — ₹${(Number(r.Price) * r.quantity).toFixed(2)}`;
+                    el.appendChild(p);
+                });
+                document.getElementById("cartTotal").textContent = total.toFixed(2);
+            } catch (e) { console.error(e); }
+        }
+
+        // ---- INIT ----
+        loadProfile();
+        loadOrderChart();
+        loadFavs();
+        loadPayments();
+        loadCartPreview();
+    </script>
+</body>
+
+</html>

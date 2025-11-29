@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Your Orders - MyRestaurant</title>
+  <link rel="stylesheet" href="css/menu.css" />
+  <link rel="stylesheet" href="css/order.css" />
+  <style>
+    /* small in-file styles to ensure layout is polished */
+    .orders-wrapper { max-width:1100px; margin:100px auto 60px; padding:0 20px; }
+    .controls { display:flex; gap:12px; align-items:center; margin-bottom:18px; }
+    .controls input, .controls select { padding:8px 12px; border-radius:8px; border:1px solid #ddd; }
+    .orders-container { display:grid; gap:16px; }
+    .order-card { background:#fff; padding:14px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
+    .order-meta { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .item-list { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
+    .order-item { width:180px; display:flex; gap:10px; background:#fafafa; padding:10px; border-radius:10px; align-items:center; }
+    .order-item img { width:64px; height:64px; object-fit:cover; border-radius:8px; }
+    .item-info { font-size:14px; }
+    .empty { color:#777; padding:20px; text-align:center; }
+    @media (max-width:720px){ .order-item { width:100%; } .item-list{ flex-direction:column } }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">🍽️ MyRestaurant</div>
+    <div class="links">
+      <a href="dashboard.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="category.html">Category</a>
+      <a href="cart.html">Checkout</a>
+      <a href="orders.html" class="active">Your Orders</a>
+      <a href="profile.html">Profile</a>
+    </div>
+  </nav>
+
+  <div class="orders-wrapper">
+    <h1>Your Orders</h1>
+
+    <div class="controls">
+      <input id="searchBox" placeholder="Search orders or items..." />
+      <select id="sortSelect">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="high">Highest Amount</option>
+        <option value="low">Lowest Amount</option>
+      </select>
+    </div>
+
+    <div id="order-list" class="orders-container"></div>
+  </div>
+
+  <footer class="footer">© 2025 MyRestaurant</footer>
+
+  <script>
+    const USER_ID = localStorage.getItem("userId") || 1;
+
+    const imageMap = {
+      "idli": "http://localhost:5000/images/item1.jpg",
+      "medu vada": "http://localhost:5000/images/item2.jpeg",
+      "plain dosa": "http://localhost:5000/images/item3.jpeg",
+      "masala dosa": "http://localhost:5000/images/item4.jpeg",
+      "upma": "http://localhost:5000/images/item2.jpeg",
+      "poha": "http://localhost:5000/images/item3.jpeg",
+    };
+    function imgFor(n){ return imageMap[n.toLowerCase()] || "http://localhost:5000/images/item2.jpeg"; }
+
+    let allOrders = [];
+
+    async function loadOrders(){
+      try{
+        const res = await fetch(`http://localhost:5000/api/orders/${USER_ID}`);
+        allOrders = await res.json();
+        renderOrders(allOrders);
+      }catch(e){ console.error(e); document.getElementById("order-list").innerHTML = '<div class="empty">Could not load orders.</div>'; }
+    }
+
+    function renderOrders(list){
+      const container = document.getElementById("order-list");
+      container.innerHTML = "";
+      if(!list.length){ container.innerHTML = '<div class="empty">No orders yet.</div>'; return; }
+
+      list.forEach(order => {
+        const dateStr = (order.OrderDate||'').split && order.OrderDate.split('T')[0] || String(order.OrderDate).slice(0,10);
+        let itemsHtml = '';
+        order.Items.forEach(it => {
+          itemsHtml += `
+            <div class="order-item">
+              <img src="${imgFor(it.Name)}" alt="${it.Name}" />
+              <div class="item-info">
+                <div><strong>${it.Name}</strong></div>
+                <div>Qty: ${it.Quantity}</div>
+                <div>₹${Number(it.Price).toFixed(2)}</div>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML += `
+          <div class="order-card">
+            <div class="order-meta">
+              <div>
+                <h3 style="margin:0">Order #${order.OrderID}</h3>
+                <div style="color:#666">Date: ${dateStr}</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-weight:700; color:#333">Total ₹${Number(order.TotalAmount).toFixed(2)}</div>
+              </div>
+            </div>
+
+            <div class="item-list">
+              ${itemsHtml}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // search
+    document.getElementById("searchBox").addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase();
+      const filtered = allOrders.filter(o => {
+        if(String(o.OrderID).includes(q)) return true;
+        if(String(o.TotalAmount).includes(q)) return true;
+        // items
+        if(o.Items.some(i => i.Name.toLowerCase().includes(q))) return true;
+        return false;
+      });
+      renderOrders(filtered);
+    });
+
+    // sort
+    document.getElementById("sortSelect").addEventListener("change", (e) => {
+      const type = e.target.value;
+      let sorted = [...allOrders];
+      if(type==='newest') sorted.sort((a,b)=>new Date(b.OrderDate)-new Date(a.OrderDate));
+      if(type==='oldest') sorted.sort((a,b)=>new Date(a.OrderDate)-new Date(b.OrderDate));
+      if(type==='high') sorted.sort((a,b)=>b.TotalAmount-a.TotalAmount);
+      if(type==='low') sorted.sort((a,b)=>a.TotalAmount-b.TotalAmount);
+      renderOrders(sorted);
+    });
+
+    loadOrders();
+  </script>
+</body>
+</html>
